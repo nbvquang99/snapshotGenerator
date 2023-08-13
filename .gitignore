@@ -1,0 +1,6 @@
+*.bin
+*.log
+main
+log.txt
+.vscode
+main.dSYM
