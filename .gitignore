@@ -1,6 +1,6 @@
 *.bin
 *.log
 main
-log.txt
+*.txt
 .vscode
 main.dSYM
