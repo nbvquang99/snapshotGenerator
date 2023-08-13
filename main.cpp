@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
     
         printf("Time taken by reading, parsing file %s: %lld (ms).\n", argv[2], duration.count());
         printf("-----------------------\n");
-    } else if (strcmp(argv[1], "QUERY") == 0) {
+    } else if (strcmp(argv[1], "QUERY_SHORT") == 0) {
         if (argc < 4) error("ERROR not enough arguments\n");
 
         int nSymbol = atoi(argv[2]);
@@ -123,6 +123,67 @@ int main(int argc, char *argv[]) {
                 closeBook(sellBook);
                 closeBook(buyBook);
             }
+        }
+    } else if (strcmp(argv[1], "QUERY_LONG") == 0) {
+        if (argc < 6) error("ERROR not enough arguments\n");
+
+        int nSymbol = atoi(argv[4]);
+        if (argc - 5 != nSymbol) error("ERROR the number of symbols do not match\n");
+        long long epochL, epochR;
+        epochL = atoll(argv[2]);
+        epochR = atoll(argv[3]);
+        if (epochL > epochR) {
+            std::cout << "Invalid range" << std::endl;
+            return 0;
+        }
+
+        std::ios::sync_with_stdio(false);
+	    std::cout.tie(nullptr);
+        freopen("snapshot.txt", "w", stdout);
+
+        for (int i=0; i<nSymbol; i++) {
+            std::string symbol(argv[i+5]);
+            Book* buyBook = initAVL(symbol, "BUY");
+            Book* sellBook = initAVL(symbol, "SELL");
+            initArr(buyBook, symbol, "BUY");
+            initArr(sellBook, symbol, "SELL");
+
+            // Process the query here
+            std::cout << "--------*********--------- " << "SNAPSHOT FOR " << symbol << " --------*********---------" << std::endl;
+            int buyRootLower = findLowerRootByEpoch(buyBook, epochL);
+            int buyRootUpper = findUpperRootByEpoch(buyBook, epochR);
+            int sellRootLower = findLowerRootByEpoch(sellBook, epochL);
+            int sellRootUpper = findUpperRootByEpoch(sellBook, epochR);
+            if (buyRootLower == -1 || buyRootUpper==-1) {
+                std::cout << "Invalid range for side BUY" << std::endl;
+            } else {
+                // std::cout << buyRootLower << " " << buyRootUpper << std::endl;
+                for (int i = buyRootLower; i<=buyRootUpper; i++) {
+                    int rootIndex = accessArr(buyBook->mapped_region_arr, i)->index;
+                    long long rootEpoch = accessArr(buyBook->mapped_region_arr, i)->epoch;
+                    std::vector<flin> res;
+                    findBid(accessNode(buyBook->mapped_region, rootIndex), buyBook->mapped_region, res);
+                    std::cout << "BID " << symbol << ", " << rootEpoch << ", ";
+                    for (int j=0; j<res.size()-1; j++) std::cout << res[j].second << "@" << res[j].first << ", ";
+                    std::cout << res[res.size()-1].second << "@" << res[res.size()-1].first << std::endl;
+                }
+            }
+            if (sellRootLower==-1 || sellRootUpper==-1) {
+                std::cout << "Invalid range for side SALE" << std::endl;
+            } else {
+                // std::cout << sellRootLower << " " << sellRootUpper << std::endl;
+                for (int i = sellRootLower; i<=sellRootUpper; i++) {
+                    int rootIndex = accessArr(sellBook->mapped_region_arr, i)->index;
+                    long long rootEpoch = accessArr(sellBook->mapped_region_arr, i)->epoch;
+                    std::vector<flin> res;
+                    findAsk(accessNode(sellBook->mapped_region, rootIndex), sellBook->mapped_region, res);
+                    std::cout << "ASK " << symbol << ", " << rootEpoch << ", ";
+                    for (int j=0; j<res.size()-1; j++) std::cout << res[j].second << "@" << res[j].first << ", ";
+                    std::cout << res[res.size()-1].second << "@" << res[res.size()-1].first << std::endl;
+                }
+            }
+            closeBook(sellBook);
+            closeBook(buyBook);
         }
     } else {
         error("ERROR selected mode not support\n");
