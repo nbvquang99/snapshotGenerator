@@ -125,6 +125,9 @@ int main(int argc, char *argv[]) {
             }
         }
     } else if (strcmp(argv[1], "QUERY_LONG") == 0) {
+        // time measuring
+        auto start = std::chrono::high_resolution_clock::now();
+
         if (argc < 6) error("ERROR not enough arguments\n");
 
         int nSymbol = atoi(argv[4]);
@@ -184,6 +187,10 @@ int main(int argc, char *argv[]) {
             }
             closeBook(sellBook);
             closeBook(buyBook);
+            auto stop = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+            std::cout << "Time to generate and write snapshots to snapshot.txt: " <<  duration.count() << " (ms)" << std::endl;
+            std::cout << "-----------------------" << std::endl;
         }
     } else {
         error("ERROR selected mode not support\n");
