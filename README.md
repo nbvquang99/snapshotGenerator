@@ -11,7 +11,7 @@
 - This is a program to generate the snapshot from orders log file.
 - The idea bases on AVLTree with performing of persistent update method to reserve the history of data structure modification.
 - Using mmap() to create disk-base data structure.
-- Time mesuring on MacBook Pro 2019, 16GB, Core i7 2.6GHz x 6.
+- Time measuring on MacBook Pro 2019, 16GB, Core i7 2.6GHz x 6.
 
 # II. Compile and run
 Compile with
