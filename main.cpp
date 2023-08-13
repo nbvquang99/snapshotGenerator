@@ -102,14 +102,23 @@ int main(int argc, char *argv[]) {
                         std::vector<flin> res;
                         findBid(accessNode(buyBook->mapped_region, rootIndex), buyBook->mapped_region, res);
                         std::cout << "BID " << symbol << ", " << rootEpoch << ", ";
-                        for (int j=res.size()-1; j>0; j--) std::cout << res[j].second << "@" << res[j].first << ", ";
-                        std::cout << res[0].second << "@" << res[0].first << std::endl;
+                        for (int j=0; j<res.size()-1; j++) std::cout << res[j].second << "@" << res[j].first << ", ";
+                        std::cout << res[res.size()-1].second << "@" << res[res.size()-1].first << std::endl;
                     }
                 }
                 if (sellRootLower==-1 || sellRootUpper==-1) {
                     std::cout << "Invalid range for side SALE" << std::endl;
                 } else {
                     // std::cout << sellRootLower << " " << sellRootUpper << std::endl;
+                    for (int i = sellRootLower; i<=sellRootUpper; i++) {
+                        int rootIndex = accessArr(sellBook->mapped_region_arr, i)->index;
+                        long long rootEpoch = accessArr(sellBook->mapped_region_arr, i)->epoch;
+                        std::vector<flin> res;
+                        findAsk(accessNode(sellBook->mapped_region, rootIndex), sellBook->mapped_region, res);
+                        std::cout << "ASK " << symbol << ", " << rootEpoch << ", ";
+                        for (int j=0; j<res.size()-1; j++) std::cout << res[j].second << "@" << res[j].first << ", ";
+                        std::cout << res[res.size()-1].second << "@" << res[res.size()-1].first << std::endl;
+                    }
                 }
                 closeBook(sellBook);
                 closeBook(buyBook);
