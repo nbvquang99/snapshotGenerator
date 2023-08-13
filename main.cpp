@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
                 int buyRootUpper = findUpperRootByEpoch(buyBook, epochR);
                 int sellRootLower = findLowerRootByEpoch(sellBook, epochL);
                 int sellRootUpper = findUpperRootByEpoch(sellBook, epochR);
-                if (buyRootLower == -1 || buyRootUpper==-1) {
+                if (buyRootLower == -1 || buyRootUpper==-1 || buyRootLower > buyRootUpper) {
                     std::cout << "Invalid range for side BUY" << std::endl;
                 } else {
                     // std::cout << buyRootLower << " " << buyRootUpper << std::endl;
@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
                         std::cout << res[res.size()-1].second << "@" << res[res.size()-1].first << std::endl;
                     }
                 }
-                if (sellRootLower==-1 || sellRootUpper==-1) {
+                if (sellRootLower==-1 || sellRootUpper==-1 || sellRootLower > sellRootUpper) {
                     std::cout << "Invalid range for side SALE" << std::endl;
                 } else {
                     // std::cout << sellRootLower << " " << sellRootUpper << std::endl;
